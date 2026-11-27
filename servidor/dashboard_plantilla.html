@@ -1,0 +1,584 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RatChat · Dashboard del detector</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%231c2422'/%3E%3Ccircle cx='20' cy='24' r='10' fill='%235fa8e8'/%3E%3Ccircle cx='38' cy='24' r='10' fill='%235fa8e8'/%3E%3Cpath d='M12 36 Q14 22 32 24 Q44 26 56 40 Q44 52 28 50 Q10 48 12 36Z' fill='%235fa8e8'/%3E%3Ccircle cx='31' cy='34' r='4' fill='%231c2422'/%3E%3C/svg%3E">
+<style>
+:root{
+  --fondo:#f3f6f1; --panel:#ffffff; --texto:#17221e; --suave:#52625b; --linea:#d5ddd6;
+  --acento:#1d6fb8; --acento-t:#ffffff; --ok:#1f7a4d; --mal:#b3372b; --aviso:#8a5a00;
+  --c-limpio:#2a9d8f; --c-insulto:#c44536; --c-groseria:#d08a1c; --c-odio:#7b4fb5; --c-amenaza:#1d4e89;
+  --modelo:#8a96a3; --sistema:#1d6fb8;
+  --calor:29,111,184;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-tema="claro"]){
+    --fondo:#101815; --panel:#18231f; --texto:#e8f0ec; --suave:#a2b3ab; --linea:#2c3b35;
+    --acento:#5fa8e8; --acento-t:#0c1511; --ok:#58c48e; --mal:#ff8b7e; --aviso:#ffc15a;
+    --c-limpio:#3cc3b2; --c-insulto:#ff7f6e; --c-groseria:#f1b24f; --c-odio:#b690f0; --c-amenaza:#6aa7f0;
+    --modelo:#7f8d9a; --sistema:#5fa8e8; --calor:95,168,232;
+  }
+}
+:root[data-tema="oscuro"]{
+  --fondo:#101815; --panel:#18231f; --texto:#e8f0ec; --suave:#a2b3ab; --linea:#2c3b35;
+  --acento:#5fa8e8; --acento-t:#0c1511; --ok:#58c48e; --mal:#ff8b7e; --aviso:#ffc15a;
+  --c-limpio:#3cc3b2; --c-insulto:#ff7f6e; --c-groseria:#f1b24f; --c-odio:#b690f0; --c-amenaza:#6aa7f0;
+  --modelo:#7f8d9a; --sistema:#5fa8e8; --calor:95,168,232;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--fondo);color:var(--texto);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+a{color:var(--acento)}
+header.cab{padding:28px 20px 8px;max-width:1180px;margin:0 auto}
+h1{font-size:clamp(1.5rem,3vw,2.1rem);margin:0 0 6px;line-height:1.15}
+h2{font-size:1.3rem;margin:0 0 4px}
+h3{font-size:1.02rem;margin:0 0 8px}
+.sub{color:var(--suave);margin:0}
+nav.menu{position:sticky;top:0;z-index:5;background:var(--fondo);border-bottom:1px solid var(--linea);padding:8px 20px}
+nav.menu .in{max-width:1180px;margin:0 auto;display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+nav.menu a{padding:5px 11px;border-radius:999px;text-decoration:none;color:var(--texto);font-size:.9rem;border:1px solid transparent}
+nav.menu a:hover{border-color:var(--linea);background:var(--panel)}
+nav.menu button{margin-left:auto}
+main{max-width:1180px;margin:0 auto;padding:12px 20px 60px}
+section.bloque{margin-top:26px}
+.panel{background:var(--panel);border:1px solid var(--linea);border-radius:14px;padding:18px}
+.rejilla{display:grid;gap:14px}
+.g4{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+.g2{grid-template-columns:repeat(auto-fit,minmax(340px,1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+.kpi .n{font-size:2rem;font-weight:700;line-height:1.1}
+.kpi .t{color:var(--suave);font-size:.9rem}
+.nota{color:var(--suave);font-size:.88rem;margin:8px 0 0}
+.aviso-caja{border-left:4px solid var(--aviso);background:rgba(200,150,40,.12);padding:10px 14px;border-radius:8px;font-size:.92rem}
+button,.chip{font:inherit;cursor:pointer}
+button{border:1px solid var(--linea);background:var(--panel);color:var(--texto);padding:7px 13px;border-radius:9px}
+button.primario{background:var(--acento);color:var(--acento-t);border-color:var(--acento);font-weight:600}
+button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(--acento);outline-offset:2px}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 10px}
+.tabs button[aria-pressed="true"]{background:var(--acento);color:var(--acento-t);border-color:var(--acento)}
+svg text{fill:var(--texto);font-family:inherit}
+svg .suave{fill:var(--suave)}
+.leyenda{display:flex;gap:14px;flex-wrap:wrap;font-size:.88rem;color:var(--suave);margin:6px 0 0}
+.leyenda i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+table.tabla{border-collapse:collapse;width:100%;font-size:.92rem}
+table.tabla th,table.tabla td{padding:6px 8px;border-bottom:1px solid var(--linea);text-align:left}
+table.tabla td.num,table.tabla th.num{text-align:right;font-variant-numeric:tabular-nums}
+.matriz{display:grid;grid-template-columns:auto 1fr 1fr;gap:4px;font-size:.9rem;align-items:stretch}
+.matriz .eti{color:var(--suave);padding:4px 6px;display:flex;align-items:center;justify-content:center;text-align:center;font-size:.82rem}
+.celda{border-radius:8px;padding:12px 6px;text-align:center;border:1px solid var(--linea)}
+.celda b{display:block;font-size:1.25rem;font-variant-numeric:tabular-nums}
+.celda span{font-size:.8rem;color:var(--suave)}
+.lista-err{list-style:none;margin:0;padding:0;max-height:340px;overflow:auto}
+.lista-err li{padding:7px 4px;border-bottom:1px solid var(--linea);font-size:.92rem;display:flex;gap:10px;flex-wrap:wrap;align-items:baseline}
+.etq{font-size:.76rem;padding:1px 8px;border-radius:999px;border:1px solid var(--linea);color:var(--suave);white-space:nowrap}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+/* simulador */
+.sim-banda{background:var(--panel);border:2px dashed var(--aviso);border-radius:12px;padding:12px 16px;margin:8px 0 14px;font-size:.93rem}
+.sim-form{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.sim-form input[type=text]{flex:1 1 280px;min-width:0;padding:10px 12px;font:inherit;border-radius:9px;border:1px solid var(--linea);background:var(--fondo);color:var(--texto)}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}
+.chip{border:1px solid var(--linea);background:var(--fondo);padding:3px 11px;border-radius:999px;font-size:.86rem}
+.chip:hover{border-color:var(--acento)}
+ol.pasos{list-style:none;margin:16px 0 0;padding:0;display:grid;gap:10px}
+ol.pasos>li{background:var(--panel);border:1px solid var(--linea);border-radius:12px;padding:12px 14px;display:grid;grid-template-columns:34px 1fr;gap:10px}
+ol.pasos .nro{width:30px;height:30px;border-radius:50%;background:var(--acento);color:var(--acento-t);display:flex;align-items:center;justify-content:center;font-weight:700}
+ol.pasos h4{margin:0 0 4px;font-size:.98rem}
+ol.pasos p{margin:2px 0;font-size:.92rem}
+.tok{display:inline-block;margin:2px 4px 2px 0;padding:2px 8px;border-radius:7px;border:1px solid var(--linea);font-size:.88rem}
+.tok.m-groseria,.tok.m-insulto,.tok.m-odio,.tok.m-amenaza{font-weight:600}
+.tok.m-groseria{border-color:var(--c-groseria);background:color-mix(in srgb,var(--c-groseria) 18%,transparent)}
+.tok.m-insulto{border-color:var(--c-insulto);background:color-mix(in srgb,var(--c-insulto) 18%,transparent)}
+.tok.m-odio{border-color:var(--c-odio);background:color-mix(in srgb,var(--c-odio) 18%,transparent)}
+.tok.m-amenaza{border-color:var(--c-amenaza);background:color-mix(in srgb,var(--c-amenaza) 18%,transparent)}
+.res-final{font-size:1.05rem}
+.censurado{font-size:1.25rem;font-weight:600;word-break:break-word}
+.barra{position:relative;height:18px;border-radius:9px;background:var(--linea);overflow:visible;margin:12px 0 22px}
+.barra .rel{position:absolute;left:0;top:0;bottom:0;border-radius:9px;background:var(--acento)}
+.barra .marca{position:absolute;top:-5px;bottom:-5px;width:2px;background:var(--texto)}
+.barra .marca span{position:absolute;top:26px;left:50%;transform:translateX(-50%);font-size:.74rem;color:var(--suave);white-space:nowrap}
+.veredicto{display:inline-block;padding:3px 12px;border-radius:999px;font-weight:700;font-size:.92rem}
+.v-ok{background:color-mix(in srgb,var(--ok) 20%,transparent);color:var(--ok);border:1px solid var(--ok)}
+.v-mal{background:color-mix(in srgb,var(--mal) 18%,transparent);color:var(--mal);border:1px solid var(--mal)}
+footer{max-width:1180px;margin:0 auto;padding:0 20px 40px;color:var(--suave);font-size:.86rem}
+.sr{position:absolute;left:-9999px}
+@media (max-width:560px){ol.pasos>li{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header class="cab">
+  <h1>RatChat · Dashboard del detector de lenguaje inapropiado</h1>
+  <p class="sub">Métricas reales del último entrenamiento (<span class="mono">modelo/metricas.json</span>) y un simulador que reproduce el detector. Sistema híbrido: reglas léxicas y de contexto + TF-IDF y regresión logística.</p>
+</header>
+<nav class="menu" aria-label="Secciones"><div class="in">
+  <a href="#resumen">Resumen</a><a href="#dataset">Dataset</a><a href="#comparativa">Modelo vs. sistema</a>
+  <a href="#confusion">Matrices</a><a href="#tipos">Aciertos por tipo</a><a href="#errores">Errores</a><a href="#simulador">Simulador</a>
+  <button id="btn-tema" type="button" title="Cambiar entre tema claro y oscuro">Tema</button>
+</div></nav>
+<main>
+  <section class="bloque" id="resumen"><div class="rejilla g4" id="kpis"></div>
+    <p class="aviso-caja" style="margin-top:14px"><b>Cómo leer estos números.</b> El dataset es sintético (lo genera <span class="mono">generar_dataset.py</span> con plantillas y vocabulario escritos a mano). Las métricas "no vistas" separan plantillas completas entre entrenamiento y prueba (<span class="mono">GroupShuffleSplit</span>), pero siguen siendo frases del mismo tipo de generador: con mensajes reales de chat los resultados serían menores. <span class="mono">prueba_dificil.csv</span> se escribió a mano y se usó mientras se ajustaba el léxico, así que es optimista.</p>
+  </section>
+
+  <section class="bloque" id="dataset">
+    <h2>Dataset: distribución por categoría</h2>
+    <p class="sub">Todas las frases están en español. Las cuatro categorías inapropiadas tienen etiqueta 1; <i>limpio</i> tiene etiqueta 0.</p>
+    <div class="rejilla g2" style="margin-top:12px">
+      <div class="panel"><h3>Frases por tipo</h3><div id="g-dataset"></div></div>
+      <div class="panel"><h3>Detalle</h3><div id="t-dataset"></div></div>
+    </div>
+  </section>
+
+  <section class="bloque" id="comparativa">
+    <h2>Modelo de IA solo vs. sistema híbrido completo</h2>
+    <p class="sub">Promedio de las divisiones con plantillas que el modelo nunca vio (barras de error = desviación estándar entre divisiones).</p>
+    <div class="rejilla g2" style="margin-top:12px">
+      <div class="panel"><h3>Exactitud, precisión, recall y F1 (clase «inapropiado»)</h3><div id="g-comparativa"></div>
+        <div class="leyenda"><span><i style="background:var(--modelo)"></i>Modelo de IA solo</span><span><i style="background:var(--sistema)"></i>Sistema híbrido (léxico + contexto + IA)</span></div></div>
+      <div class="panel"><h3>Tabla</h3><div id="t-comparativa"></div>
+        <p class="nota">El léxico y las reglas de contexto suben sobre todo la exactitud en frases «limpias» y en groserías claras; el modelo de IA cubre palabras que el léxico no conoce.</p></div>
+    </div>
+  </section>
+
+  <section class="bloque" id="confusion">
+    <h2>Matrices de confusión</h2>
+    <p class="sub">Filas = etiqueta real, columnas = predicción. Las matrices de plantillas no vistas suman las 5 divisiones.</p>
+    <div class="rejilla g3" style="margin-top:12px" id="matrices"></div>
+  </section>
+
+  <section class="bloque" id="tipos">
+    <h2>Aciertos por tipo</h2>
+    <div class="rejilla g2" style="margin-top:12px">
+      <div class="panel"><h3>Plantillas no vistas (dataset de 10,400 frases)</h3><div id="g-tipos"></div>
+        <div class="leyenda"><span><i style="background:var(--modelo)"></i>Modelo de IA solo</span><span><i style="background:var(--sistema)"></i>Sistema híbrido</span></div></div>
+      <div class="panel"><h3>prueba_dificil.csv (escrita a mano, sistema híbrido)</h3><div id="g-dificil"></div>
+        <p class="nota" id="n-dificil"></p></div>
+    </div>
+  </section>
+
+  <section class="bloque" id="errores">
+    <h2>Ejemplos de errores</h2>
+    <p class="sub">Sirven para el análisis en la exposición: qué tipo de frases todavía fallan y por qué.</p>
+    <div class="panel" style="margin-top:12px">
+      <div class="tabs" id="tabs-err"></div>
+      <ul class="lista-err" id="lista-err"></ul>
+    </div>
+  </section>
+
+  <section class="bloque" id="simulador">
+    <h2>Simulador del detector</h2>
+    <div class="sim-banda"><b>Esto es una simulación en JavaScript para demostración.</b> Reimplementa en el navegador la normalización (<span class="mono">normalizar.py</span>), las reglas y categorías (<span class="mono">lexico.py</span>) y las reglas de contexto y umbrales (<span class="mono">detector.py</span>). La probabilidad del «modelo» se calcula con los vocabularios, IDF y coeficientes del modelo ya entrenado, así que coincide con scikit-learn, pero el servidor real de RatChat corre en Python.</div>
+    <div class="panel">
+      <div class="tabs" role="group" aria-label="Qué probar"><button type="button" id="modo-chat" aria-pressed="true">Mensaje de chat</button><button type="button" id="modo-nombre" aria-pressed="false">Nombre de usuario</button></div>
+      <form class="sim-form" id="form-sim" autocomplete="off">
+        <label class="sr" for="entrada">Texto a probar</label>
+        <input type="text" id="entrada" maxlength="120" placeholder="Escribe un mensaje…" value="qué chingón jugaste">
+        <button class="primario" type="submit">Analizar</button>
+      </form>
+      <div class="chips" id="chips" aria-label="Ejemplos"></div>
+      <ol class="pasos" id="pasos" aria-live="polite"></ol>
+    </div>
+  </section>
+</main>
+<footer id="pie"></footer>
+
+<script>
+const DATOS = /*__DATOS__*/null;
+</script>
+
+<script>
+/* ===================== Motor del detector (réplica en JavaScript) ===================== */
+const Motor = (() => {
+  const D = DATOS, L = D.lexico;
+  const UMBRAL_CONTEXTO = 0.5, UMBRAL_MODELO = 0.85, UMBRAL_NOMBRE = 0.85;
+  const PRIORIDAD = {amenaza: 3, odio: 2, groseria: 1, insulto: 0};
+
+  const R = {
+    raiz: new RegExp(L.patron_raiz), palabra: new RegExp(L.patron_palabra), odio: new RegExp(L.patron_odio),
+    contexto: new RegExp(L.patron_contexto), ingles: new RegExp(L.patron_ingles),
+    fOdio: L.frases_odio.map(s => new RegExp(s, "g")),
+    fAmenaza: L.frases_amenaza.map(s => new RegExp(s, "g")),
+    seguros: L.seguros_amenaza.map(s => new RegExp(s)),
+    fGros: L.frases_groseras.map(s => new RegExp(s, "g")),
+    segurosNombre: new RegExp(L.nombres_seguros, "g"),
+  };
+  const NORMALES = new Set(L.normales), S_INS = new Set(L.senal_insulto), S_ANI = new Set(L.senal_animal);
+
+  /* ---- normalizar.py ---- */
+  const LEET = {"0": "o", "1": "i", "3": "e", "4": "a", "5": "s", "7": "t", "@": "a", "$": "s"};
+  const quitarAcentos = t => t.normalize("NFD").replace(/\p{Mn}/gu, "");
+  const LETRA = "0-9A-Za-zÀ-ÖØ-öø-ÿ@$";
+  const TOKEN_RE = new RegExp(`[${LETRA}]+(?:[.\\-_*·'´\`]+[${LETRA}]+)*`, "g");
+  function normalizarToken(tok) {
+    let t = quitarAcentos(tok.toLowerCase());
+    if (/\p{L}/u.test(t)) t = Array.from(t, c => LEET[c] ?? c).join("");
+    t = t.replace(/[^a-z]/g, "");
+    return t.replace(/(.)\1{2,}/g, "$1$1");
+  }
+  function tokenizar(texto) {
+    const crudos = [];
+    for (const m of texto.matchAll(TOKEN_RE)) {
+      const p = normalizarToken(m[0]);
+      if (p) crudos.push([p, m.index, m.index + m[0].length, m[0]]);
+    }
+    const salida = []; let i = 0;
+    while (i < crudos.length) {
+      let j = i;
+      while (j < crudos.length && crudos[j][0].length === 1) j++;
+      if (j - i >= 3) {
+        salida.push([crudos.slice(i, j).map(c => c[0]).join(""), crudos[i][1], crudos[j - 1][2], texto.slice(crudos[i][1], crudos[j - 1][2])]);
+        i = j;
+      } else { salida.push(crudos[i]); i++; }
+    }
+    return salida;
+  }
+
+  /* ---- modelo de IA: TF-IDF (palabras 1-2 + letras 2-5) y regresión logística ---- */
+  const MODELO = D.modelo;
+  const indice = b => new Map(MODELO[b].terminos.map((t, i) => [t, i]));
+  const IDX = {palabras: indice("palabras"), letras: indice("letras")};
+  function rasgosPalabras(texto) {
+    const t = texto.match(/\b\w\w+\b/g) || [], r = [];
+    for (let n = 1; n <= 2; n++) for (let i = 0; i + n <= t.length; i++) r.push(t.slice(i, i + n).join(" "));
+    return r;
+  }
+  function rasgosLetras(texto) {
+    const r = [];
+    for (const pal of texto.replace(/\s+/g, " ").split(" ").filter(Boolean)) {
+      const w = " " + pal + " ", largo = w.length;
+      for (let n = 2; n <= 5; n++) {
+        let off = 0; r.push(w.slice(off, off + n));
+        while (off + n < largo) { off++; r.push(w.slice(off, off + n)); }
+        if (off === 0) break;
+      }
+    }
+    return r;
+  }
+  function bloque(nombre, rasgos) {
+    const cuenta = new Map(), idx = IDX[nombre], B = MODELO[nombre];
+    for (const f of rasgos) { const i = idx.get(f); if (i !== undefined) cuenta.set(i, (cuenta.get(i) || 0) + 1); }
+    let norma = 0; const v = [];
+    for (const [i, c] of cuenta) { const x = (1 + Math.log(c)) * B.idf[i]; v.push([i, x]); norma += x * x; }
+    norma = Math.sqrt(norma);
+    return norma === 0 ? [] : v.map(([i, x]) => ({termino: B.terminos[i], aporte: B.coef[i] * x / norma, tipo: nombre}));
+  }
+  function modelo(textoNormalizado) {
+    const aportes = [...bloque("palabras", rasgosPalabras(textoNormalizado)), ...bloque("letras", rasgosLetras(textoNormalizado))];
+    const z = aportes.reduce((s, a) => s + a.aporte, MODELO.intercepto);
+    aportes.sort((a, b) => b.aporte - a.aporte);
+    return {probabilidad: 1 / (1 + Math.exp(-z)), logit: z, aportes};
+  }
+
+  /* ---- lexico.py ---- */
+  const esGroseria = p => !NORMALES.has(p) && (R.raiz.test(p) || R.palabra.test(p));
+  const esIngles = p => R.ingles.test(p);
+  const esOdio = p => R.odio.test(p);
+  const esContexto = p => R.contexto.test(p);
+  function contextoInsulto(palabras, i) {
+    if (palabras.some(p => S_ANI.has(p))) return false;
+    return palabras.slice(Math.max(0, i - 3), i).some(p => S_INS.has(p));
+  }
+  function coincidencias(regs, plano) {
+    const out = [];
+    for (const r of regs) { r.lastIndex = 0; for (const m of plano.matchAll(r)) out.push({inicio: m.index, fin: m.index + m[0].length, texto: m[0], patron: r.source}); }
+    return out;
+  }
+  const fraseAmenaza = plano => R.seguros.some(r => r.test(plano)) ? [] : coincidencias(R.fAmenaza, plano);
+
+  /* ---- detector.py: analizar ---- */
+  function analizar(texto) {
+    texto = texto || "";
+    const toks = tokenizar(texto), palabras = toks.map(t => t[0]), plano = palabras.join(" ");
+    const mod = modelo(plano), prob = mod.probabilidad;
+    const marcados = new Map(), razones = [];
+    const marcar = (i, cat, razon) => {
+      if (!marcados.has(i) || PRIORIDAD[cat] > PRIORIDAD[marcados.get(i)]) marcados.set(i, cat);
+      razones.push({indice: i, categoria: cat, razon});
+    };
+    // 1) palabras sueltas
+    palabras.forEach((p, i) => {
+      if (esOdio(p)) marcar(i, "odio", "palabra de odio del léxico");
+      else if (esGroseria(p)) marcar(i, "groseria", "grosería del léxico");
+      else if (esIngles(p)) marcar(i, "groseria", "grosería (léxico en inglés)");
+    });
+    // 2) frases
+    const pos = []; let c = 0; palabras.forEach(p => { pos.push([c, c + p.length]); c += p.length + 1; });
+    const tokensDe = m => pos.map((r, i) => (r[0] < m.fin && r[1] > m.inicio) ? i : -1).filter(i => i >= 0);
+    const frases = [];
+    for (const [cat, lista, etiqueta] of [["amenaza", fraseAmenaza(plano), "frase de amenaza"],
+                                            ["odio", coincidencias(R.fOdio, plano), "frase de odio"],
+                                            ["groseria", coincidencias(R.fGros, plano), "frase grosera"]]) {
+      for (const m of lista) { frases.push({categoria: cat, texto: m.texto, tipo: etiqueta}); tokensDe(m).forEach(i => marcar(i, cat, `${etiqueta}: «${m.texto}»`)); }
+    }
+    let motivo = marcados.size ? "lexico" : "";
+    // 3) palabras ambiguas (contexto)
+    const contexto = [];
+    palabras.forEach((p, i) => {
+      if (marcados.has(i) || !esContexto(p)) return;
+      const senal = contextoInsulto(palabras, i), animal = palabras.some(w => S_ANI.has(w));
+      const censura = senal || (prob >= UMBRAL_CONTEXTO && !animal);
+      contexto.push({palabra: p, senal, animal, censura});
+      if (censura) { marcar(i, "insulto", senal ? "palabra ambigua con señal de insulto antes de ella" : "palabra ambigua y el modelo supera 0.5"); motivo = motivo || "contexto"; }
+    });
+    // 4) modelo sin palabra conocida
+    let porModelo = false;
+    if (!marcados.size && prob >= UMBRAL_MODELO && toks.length) {
+      toks.forEach((_, i) => marcar(i, "insulto", "mensaje completo clasificado por el modelo (≥ 0.85)"));
+      motivo = "modelo"; porModelo = true;
+    }
+    const resultado = {original: texto, tokens: toks, palabras, normalizado: plano, probabilidad: prob, modelo: mod,
+      marcados, razones, frases, contexto, porModelo, motivo, esInapropiado: marcados.size > 0, categoria: "", censurado: texto, palabrasCensuradas: []};
+    if (marcados.size) {
+      resultado.categoria = [...marcados.values()].reduce((a, b) => PRIORIDAD[b] > PRIORIDAD[a] ? b : a);
+      const out = Array.from(texto);   // índices UTF-16 como los de matchAll: se usa split por unidades
+      const arr = texto.split("");
+      for (const i of [...marcados.keys()].sort((a, b) => a - b)) {
+        for (let k = toks[i][1]; k < toks[i][2]; k++) if (!/\s/.test(arr[k])) arr[k] = "*";
+        resultado.palabrasCensuradas.push(texto.slice(toks[i][1], toks[i][2]));
+      }
+      resultado.censurado = arr.join("");
+    }
+    return resultado;
+  }
+
+  /* ---- detector.py: nombre_permitido ---- */
+  const LEET_NOMBRE = {"0": "o", "1": "i", "3": "e", "4": "a", "5": "s", "7": "t", "@": "a", "$": "s", "!": "i"};
+  function nombrePermitido(nombre) {
+    const pasos = [];
+    const sinAc = quitarAcentos(nombre.toLowerCase());
+    let compacto = Array.from(sinAc, c => LEET_NOMBRE[c] ?? c).join("").replace(/[^a-z]/g, "");
+    compacto = compacto.replace(/(.)\1{2,}/g, "$1$1");
+    R.segurosNombre.lastIndex = 0;
+    const sinSeguros = compacto.replace(R.segurosNombre, "");
+    pasos.push({paso: "Nombre compacto (sin símbolos ni repeticiones)", valor: compacto});
+    if (sinSeguros !== compacto) pasos.push({paso: "Se quitan palabras normales que contienen raíces peligrosas (lista de excepciones)", valor: sinSeguros || "(vacío)"});
+    const hit = L.raices_nombre.find(r => sinSeguros.includes(r));
+    if (hit) return {permitido: false, motivo: "raíz prohibida dentro del nombre", detalle: `«${hit}»`, compacto, pasos};
+    const sinRep = sinSeguros.replace(/(.)\1+/g, "$1");
+    const hit2 = L.raices_nombre.filter(r => r.length >= 5).find(r => sinRep.includes(r.replace(/(.)\1+/g, "$1")));
+    if (hit2) return {permitido: false, motivo: "raíz prohibida con letras repetidas", detalle: `«${hit2}»`, compacto, pasos};
+    const a = analizar(nombre);
+    if (a.esInapropiado && a.motivo !== "contexto") return {permitido: false, motivo: `el detector de chat lo censura (${a.motivo}, ${a.categoria})`, detalle: a.censurado, compacto, pasos, analisis: a};
+    const p = a.probabilidad;
+    if (p >= UMBRAL_NOMBRE) return {permitido: false, motivo: "el modelo de IA lo considera inapropiado (≥ 0.85)", detalle: p.toFixed(3), compacto, pasos, analisis: a};
+    return {permitido: true, motivo: "no se encontró nada inapropiado", detalle: p.toFixed(3), compacto, pasos, analisis: a};
+  }
+
+  return {tokenizar, analizar, nombrePermitido, UMBRAL_CONTEXTO, UMBRAL_MODELO, UMBRAL_NOMBRE};
+})();
+if (typeof module !== "undefined") module.exports = Motor;
+</script>
+
+<script>
+/* ===================== Interfaz ===================== */
+(() => {
+  if (typeof document === "undefined") return;
+  const M = DATOS.metricas;
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]));
+  const pct = (x, d = 1) => (x * 100).toFixed(d) + " %";
+  const num = x => x.toLocaleString("es-MX");
+  const TIPOS = ["limpio", "insulto", "groseria", "odio", "amenaza"];
+  const NOMBRE_TIPO = {limpio: "Limpio", insulto: "Insulto", groseria: "Grosería", odio: "Odio", amenaza: "Amenaza"};
+  const color = t => `var(--c-${t})`;
+  const NS = "http://www.w3.org/2000/svg";
+
+  /* ---------- tema ---------- */
+  const raiz = document.documentElement;
+  try { const g = localStorage.getItem("ratchat-tema"); if (g) raiz.dataset.tema = g; } catch (e) {}
+  $("btn-tema").addEventListener("click", () => {
+    const oscuroSistema = matchMedia("(prefers-color-scheme: dark)").matches;
+    const actual = raiz.dataset.tema || (oscuroSistema ? "oscuro" : "claro");
+    raiz.dataset.tema = actual === "oscuro" ? "claro" : "oscuro";
+    try { localStorage.setItem("ratchat-tema", raiz.dataset.tema); } catch (e) {}
+  });
+
+  /* ---------- resumen ---------- */
+  const ds = M.dataset, ps = M.plantillas_no_vistas, pd = M.prueba_dificil;
+  const kpi = (n, t) => `<div class="panel kpi"><div class="n">${n}</div><div class="t">${t}</div></div>`;
+  $("kpis").innerHTML =
+    kpi(num(ds.frases), `frases etiquetadas (${num(ds.caracteres)} caracteres, ${ds.plantillas} plantillas)`) +
+    kpi(pct(ps.sistema_completo.exactitud.promedio), "exactitud del sistema híbrido en plantillas no vistas") +
+    kpi(pct(ps.modelo_ia_solo.exactitud.promedio), "exactitud del modelo de IA solo, mismas pruebas") +
+    kpi(pct(pd.exactitud), `prueba_dificil.csv (${pd.frases} frases a mano, optimista)`);
+
+  /* ---------- gráficas SVG ---------- */
+  function el(tag, attrs, hijos) {
+    const e = document.createElementNS(NS, tag);
+    for (const k in attrs) e.setAttribute(k, attrs[k]);
+    if (typeof hijos === "string") e.textContent = hijos;
+    return e;
+  }
+  function svgBase(ancho, alto, etiqueta) {
+    const s = el("svg", {viewBox: `0 0 ${ancho} ${alto}`, width: "100%", role: "img", "aria-label": etiqueta});
+    s.style.display = "block"; s.style.maxWidth = "100%"; return s;
+  }
+  /* barras horizontales: filas = [{etiqueta, valor, color, texto}] */
+  function barrasH(contenedor, filas, max, etiqueta) {
+    const ancho = 560, alto = 18 + filas.length * 44, izq = 92;
+    const s = svgBase(ancho, alto, etiqueta);
+    filas.forEach((f, i) => {
+      const y = 10 + i * 44, w = Math.max(2, (ancho - izq - 90) * f.valor / max);
+      s.append(el("text", {x: izq - 8, y: y + 20, "text-anchor": "end", "font-size": 14}, f.etiqueta));
+      s.append(el("rect", {x: izq, y, width: w, height: 28, rx: 6, fill: f.color}));
+      s.append(el("text", {x: izq + w + 8, y: y + 20, "font-size": 14, "font-weight": 600}, f.texto));
+    });
+    contenedor.replaceChildren(s);
+  }
+  /* barras verticales agrupadas: grupos = [{etiqueta, valores:[{v, sd, color}]}] con eje 0..1 */
+  function barrasAgrupadas(contenedor, grupos, minY, etiqueta) {
+    const ancho = 560, alto = 300, izq = 44, abajo = 46, arriba = 14, der = 8;
+    const s = svgBase(ancho, alto, etiqueta), hy = alto - abajo - arriba;
+    const yv = v => arriba + hy * (1 - (v - minY) / (1 - minY));
+    for (let k = 0; k <= 4; k++) {
+      const v = minY + (1 - minY) * k / 4, y = yv(v);
+      s.append(el("line", {x1: izq, x2: ancho - der, y1: y, y2: y, stroke: "var(--linea)"}));
+      s.append(el("text", {x: izq - 6, y: y + 4, "text-anchor": "end", "font-size": 11, class: "suave"}, (v * 100).toFixed(0) + "%"));
+    }
+    const ag = (ancho - izq - der) / grupos.length;
+    grupos.forEach((g, i) => {
+      const n = g.valores.length, bw = Math.min(34, (ag - 14) / n), x0 = izq + i * ag + (ag - bw * n) / 2;
+      g.valores.forEach((b, j) => {
+        const x = x0 + j * bw, y = yv(Math.max(b.v, minY));
+        s.append(el("rect", {x: x + 1, y, width: bw - 2, height: Math.max(1, alto - abajo - y), rx: 4, fill: b.color}));
+        if (b.sd) { const cx = x + bw / 2; s.append(el("line", {x1: cx, x2: cx, y1: yv(Math.min(1, b.v + b.sd)), y2: yv(Math.max(minY, b.v - b.sd)), stroke: "var(--texto)", "stroke-width": 1.5})); }
+        s.append(el("text", {x: x + bw / 2, y: y - 6 - (b.sd ? 4 : 0), "text-anchor": "middle", "font-size": 10.5, "font-weight": 600}, (b.v * 100).toFixed(1)));
+      });
+      s.append(el("text", {x: izq + i * ag + ag / 2, y: alto - abajo + 18, "text-anchor": "middle", "font-size": 12.5}, g.etiqueta));
+    });
+    contenedor.replaceChildren(s);
+  }
+
+  /* dataset */
+  const tot = ds.frases;
+  barrasH($("g-dataset"), TIPOS.map(t => ({etiqueta: NOMBRE_TIPO[t], valor: ds.por_tipo[t] || 0, color: color(t),
+    texto: `${num(ds.por_tipo[t] || 0)} (${pct((ds.por_tipo[t] || 0) / tot, 1)})`})),
+    Math.max(...Object.values(ds.por_tipo)), "Frases por tipo en el dataset");
+  const inapropiadas = TIPOS.filter(t => t !== "limpio").reduce((s, t) => s + (ds.por_tipo[t] || 0), 0);
+  $("t-dataset").innerHTML = `<table class="tabla"><thead><tr><th>Tipo</th><th class="num">Frases</th><th class="num">Plantillas</th><th>Etiqueta</th></tr></thead><tbody>` +
+    TIPOS.map(t => `<tr><td><i style="display:inline-block;width:11px;height:11px;border-radius:3px;background:${color(t)};margin-right:6px"></i>${NOMBRE_TIPO[t]}</td><td class="num">${num(ds.por_tipo[t] || 0)}</td><td class="num">${(ds.plantillas_por_tipo || {})[t] ?? "—"}</td><td>${t === "limpio" ? "0 (apropiado)" : "1 (inapropiado)"}</td></tr>`).join("") +
+    `<tr><td><b>Total</b></td><td class="num"><b>${num(tot)}</b></td><td class="num"><b>${ds.plantillas}</b></td><td>${num(inapropiadas)} con etiqueta 1</td></tr></tbody></table>` +
+    `<p class="nota">${ds.frases_externas ? `Incluye ${num(ds.frases_externas)} frases de <span class="mono">externos.csv</span>.` : "Sin datasets externos: todas las frases las genera generar_dataset.py."}</p>`;
+
+  /* comparativa */
+  const METS = [["exactitud", "Exactitud"], ["precision", "Precisión"], ["recall", "Recall"], ["f1", "F1"]];
+  barrasAgrupadas($("g-comparativa"), METS.map(([k, n]) => ({etiqueta: n, valores: [
+    {v: ps.modelo_ia_solo[k].promedio, sd: ps.modelo_ia_solo[k].desviacion, color: "var(--modelo)"},
+    {v: ps.sistema_completo[k].promedio, sd: ps.sistema_completo[k].desviacion, color: "var(--sistema)"}]})), 0.8,
+    "Comparativa del modelo de IA solo y el sistema híbrido");
+  $("t-comparativa").innerHTML = `<table class="tabla"><thead><tr><th>Métrica</th><th class="num">IA sola</th><th class="num">Híbrido</th></tr></thead><tbody>` +
+    METS.map(([k, n]) => `<tr><td>${n}</td><td class="num">${pct(ps.modelo_ia_solo[k].promedio)} ± ${(ps.modelo_ia_solo[k].desviacion * 100).toFixed(1)}</td><td class="num">${pct(ps.sistema_completo[k].promedio)} ± ${(ps.sistema_completo[k].desviacion * 100).toFixed(1)}</td></tr>`).join("") +
+    `</tbody></table><p class="nota">Eje vertical desde 80 % para distinguir las diferencias.</p>`;
+
+  /* matrices */
+  function matriz(m, titulo, nota) {
+    const total = m[0][0] + m[0][1] + m[1][0] + m[1][1], mx = Math.max(m[0][0], m[0][1], m[1][0], m[1][1]);
+    const c = (v, bien) => `<div class="celda" style="background:rgba(var(--calor),${(0.08 + 0.55 * v / mx).toFixed(2)})"><b>${num(v)}</b><span>${pct(v / total, 1)} del total · ${bien}</span></div>`;
+    return `<div class="panel"><h3>${titulo}</h3><div class="matriz">
+      <div></div><div class="eti">Predijo: apropiado</div><div class="eti">Predijo: inapropiado</div>
+      <div class="eti">Real: apropiado</div>${c(m[0][0], "acierto")}${c(m[0][1], "falso positivo")}
+      <div class="eti">Real: inapropiado</div>${c(m[1][0], "falso negativo")}${c(m[1][1], "acierto")}</div>
+      <p class="nota">${nota}</p></div>`;
+  }
+  $("matrices").innerHTML =
+    matriz(ps.matriz_confusion_modelo_ia_solo, "Modelo de IA solo", "5 divisiones sumadas, plantillas no vistas.") +
+    matriz(ps.matriz_confusion_sistema_completo, "Sistema híbrido", "5 divisiones sumadas, plantillas no vistas.") +
+    matriz(pd.matriz_confusion, "prueba_dificil.csv", `${pd.frases} frases escritas a mano (optimista).`);
+
+  /* aciertos por tipo */
+  barrasAgrupadas($("g-tipos"), TIPOS.map(t => ({etiqueta: NOMBRE_TIPO[t], valores: [
+    {v: ps.aciertos_por_tipo.modelo_ia_solo[t], color: "var(--modelo)"}, {v: ps.aciertos_por_tipo.sistema_completo[t], color: "var(--sistema)"}]})), 0.7,
+    "Aciertos por tipo en plantillas no vistas");
+  const tiposD = Object.keys(pd.aciertos_por_tipo);
+  barrasH($("g-dificil"), tiposD.map(t => ({etiqueta: NOMBRE_TIPO[t] || t, valor: pd.aciertos_por_tipo[t], color: color(t in NOMBRE_TIPO ? t : "limpio"),
+    texto: `${pct(pd.aciertos_por_tipo[t], 0)} (${pd.frases_por_tipo[t]})`})), 1, "Aciertos por tipo en prueba_dificil.csv");
+  $("n-dificil").textContent = "Entre paréntesis: número de frases de ese tipo. Con tan pocas frases por tipo, un solo error mueve mucho el porcentaje.";
+
+  /* errores */
+  const fuentesErr = [
+    ["sis", "Sistema híbrido (plantillas no vistas)", ps.ejemplos_error_sistema_completo],
+    ["mod", "Modelo de IA solo (plantillas no vistas)", ps.ejemplos_error_modelo_ia_solo],
+    ["dif", "prueba_dificil.csv", pd.errores]];
+  function pintarErrores(k) {
+    const lista = fuentesErr.find(f => f[0] === k)[2];
+    $("lista-err").innerHTML = lista.length ? lista.map(e => `<li><span class="etq">${esc(NOMBRE_TIPO[e.tipo] || e.tipo)}</span><span class="mono">${esc(e.texto)}</span><span class="etq">esperado: ${e.esperado} → predijo: ${e.predijo}</span></li>`).join("")
+      : `<li>Sin errores en esta fuente.</li>`;
+    [...$("tabs-err").children].forEach(b => b.setAttribute("aria-pressed", b.dataset.k === k));
+  }
+  fuentesErr.forEach(([k, n]) => { const b = document.createElement("button"); b.type = "button"; b.dataset.k = k; b.textContent = n; b.addEventListener("click", () => pintarErrores(k)); $("tabs-err").append(b); });
+  pintarErrores("sis");
+
+  /* ---------- simulador ---------- */
+  let modo = "chat";
+  const EJEMPLOS = {
+    chat: ["qué chingón jugaste", "te voy a violar", "ese marica no sabe jugar", "P3ND3J0 jaja", "eres una perra", "mi perra tuvo cachorros",
+           "hola Maricela", "no hay que violar las reglas", "te voy a ganar jaja", "eres un tonto", "eres un crack", "bola de lerdos"],
+    nombre: ["ElPendejo99", "xXPutoXx", "P3nd3j0", "Maricela", "Computadora", "Pinche_Rata", "RataVeloz", "Nacho", "te.voy.a.violar"]};
+  function chips() {
+    $("chips").innerHTML = EJEMPLOS[modo].map(t => `<button type="button" class="chip">${esc(t)}</button>`).join("");
+    [...$("chips").children].forEach(b => b.addEventListener("click", () => { $("entrada").value = b.textContent; correr(); }));
+  }
+  function setModo(m) {
+    modo = m; $("modo-chat").setAttribute("aria-pressed", m === "chat"); $("modo-nombre").setAttribute("aria-pressed", m === "nombre");
+    $("entrada").placeholder = m === "chat" ? "Escribe un mensaje…" : "Escribe un nombre de usuario…";
+    $("entrada").value = EJEMPLOS[m][0]; chips(); correr();
+  }
+  $("modo-chat").addEventListener("click", () => setModo("chat"));
+  $("modo-nombre").addEventListener("click", () => setModo("nombre"));
+  $("form-sim").addEventListener("submit", e => { e.preventDefault(); correr(); });
+
+  const paso = (n, titulo, cuerpo) => `<li><div class="nro">${n}</div><div><h4>${titulo}</h4>${cuerpo}</div></li>`;
+  const marcaTok = (r, i) => r.marcados.has(i) ? " m-" + r.marcados.get(i) : "";
+  function barraProb(p) {
+    return `<div class="barra" role="img" aria-label="Probabilidad ${p.toFixed(3)}"><div class="rel" style="width:${(p * 100).toFixed(1)}%"></div>
+      <div class="marca" style="left:50%"><span>0.5 contexto</span></div><div class="marca" style="left:85%"><span>0.85 sin palabra conocida</span></div></div>`;
+  }
+  function correr() {
+    const t = $("entrada").value;
+    const r = Motor.analizar(t);
+    const cat = r.categoria ? NOMBRE_TIPO[r.categoria] : "—";
+    let html = "";
+    html += paso(1, "Texto original", `<p class="mono">${esc(t) || "(vacío)"}</p>`);
+    html += paso(2, "Normalización y tokens <span class=\"etq\">normalizar.py</span>",
+      `<p>Texto normalizado: <span class="mono">${esc(r.normalizado) || "(vacío)"}</span></p><p>` +
+      (r.tokens.length ? r.tokens.map((k, i) => `<span class="tok${marcaTok(r, i)}" title="Original: ${esc(k[3])}">${esc(k[3])} → <b>${esc(k[0])}</b></span>`).join("") : "Sin palabras.") +
+      `</p><p class="nota">Quita acentos, cambia números y símbolos por letras (P3ND3J0 → pendejo), reduce letras repetidas y junta letras sueltas (p e n d e j o).</p>`);
+    const lex = r.razones.filter(x => !String(x.razon).startsWith("palabra ambigua") && !String(x.razon).startsWith("mensaje completo"));
+    html += paso(3, "Léxico y frases <span class=\"etq\">lexico.py</span>",
+      lex.length ? "<p>" + lex.map(x => `<span class="tok m-${x.categoria}">${esc(r.palabras[x.indice])}</span> ${esc(x.razon)} → <b>${NOMBRE_TIPO[x.categoria]}</b>`).join("</p><p>") + "</p>"
+        : "<p>No se encontraron groserías, palabras de odio ni amenazas conocidas.</p>");
+    html += paso(4, "Palabras ambiguas y contexto <span class=\"etq\">detector.py</span>",
+      r.contexto.length ? "<p>" + r.contexto.map(x => `<span class="tok">${esc(x.palabra)}</span> señal de insulto antes: <b>${x.senal ? "sí" : "no"}</b> · animal u objeto cercano: <b>${x.animal ? "sí" : "no"}</b> → <b>${x.censura ? "se censura" : "se deja"}</b>`).join("</p><p>") + "</p>"
+        : "<p>No hay palabras ambiguas (como «perra» o «tonto») en el mensaje.</p>");
+    const top = r.modelo.aportes.slice(0, 5);
+    html += paso(5, "Modelo de IA <span class=\"etq\">simulado en JS · TF-IDF + regresión logística</span>",
+      `<p>Probabilidad estimada de «inapropiado»: <b>${r.probabilidad.toFixed(3)}</b></p>${barraProb(r.probabilidad)}` +
+      `<p class="nota">Rasgos que más empujan hacia «inapropiado»: ${top.filter(a => a.aporte > 0).map(a => `<span class="mono">«${esc(a.termino.trim())}»</span> (+${a.aporte.toFixed(2)})`).join(", ") || "ninguno"}. ` +
+      `Solo decide cuando no hay palabra conocida (≥ ${Motor.UMBRAL_MODELO}) o para palabras ambiguas (≥ ${Motor.UMBRAL_CONTEXTO}).</p>`);
+    if (modo === "chat") {
+      const motivoTxt = {lexico: "lexico (léxico y frases)", contexto: "contexto (palabra ambigua)", modelo: "modelo (simulado)"}[r.motivo] || "—";
+      html += paso(6, "Resultado para un mensaje de chat",
+        `<p><span class="veredicto ${r.esInapropiado ? "v-mal" : "v-ok"}">${r.esInapropiado ? "SE CENSURA" : "SE PERMITE"}</span></p>
+         <p>Categoría: <b>${cat}</b> · Motivo: <b>${motivoTxt}</b> · Probabilidad: <b>${r.probabilidad.toFixed(3)}</b></p>
+         <p>Texto que ve el chat:</p><p class="censurado mono">${esc(r.censurado) || "(vacío)"}</p>
+         ${r.esInapropiado ? `<p class="nota">Palabras censuradas: ${r.palabrasCensuradas.map(w => `<span class="mono">${esc(w)}</span>`).join(", ")}. En el juego esto suma una advertencia (a la tercera, baneo).</p>` : ""}`);
+    } else {
+      const n = Motor.nombrePermitido(t);
+      html += paso(6, "Resultado para un nombre de usuario <span class=\"etq\">nombre_permitido</span>",
+        `<p><span class="veredicto ${n.permitido ? "v-ok" : "v-mal"}">${n.permitido ? "NOMBRE PERMITIDO" : "NOMBRE RECHAZADO"}</span></p>
+         ${n.pasos.map(p => `<p>${esc(p.paso)}: <span class="mono">${esc(p.valor)}</span></p>`).join("")}
+         <p>Motivo: <b>${esc(n.motivo)}</b> · Detalle: <span class="mono">${esc(n.detalle)}</span></p>
+         <p class="nota">Los nombres se revisan con un filtro más estricto: busca raíces ofensivas dentro del nombre aunque estén pegadas ("xXPutoXx"), con una lista de excepciones para nombres normales ("Maricela", "Computadora").</p>`);
+    }
+    $("pasos").innerHTML = html;
+  }
+  chips(); correr();
+
+  const cfg = M.configuracion || {}, v = cfg.versiones || {};
+  $("pie").innerHTML = `Dashboard generado por <span class="mono">construir_dashboard.py</span> a partir de <span class="mono">modelo/metricas.json</span> y <span class="mono">modelo/modelo.joblib</span>. ` +
+    `Modelo: ${esc(cfg.modelo || "TF-IDF + regresión logística")}. Python ${esc(v.python || "?")}, scikit-learn ${esc(v.scikit_learn || "?")}. Sin conexión a internet ni librerías externas.`;
+})();
+</script>
+</body>
+</html>

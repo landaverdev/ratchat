@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+node_modules/
+app-android/www/
+app-android/android/app/build/
+app-android/android/build/
+app-android/android/.gradle/
+.DS_Store

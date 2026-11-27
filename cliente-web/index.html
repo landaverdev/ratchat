@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
+  <meta name="theme-color" content="#26302c">
+  <title>RatChat</title>
+  <meta name="description" content="RatChat: un chat en la alcantarilla donde las ratas platican sin groserías.">
+  <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="img/icono-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="img/icono-16.png">
+  <link rel="shortcut icon" href="favicon.ico">
+  <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
+  <link rel="manifest" href="site.webmanifest">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+  <div id="app">
+    <canvas id="escena" aria-label="Sala del juego. Toca o da clic para caminar."></canvas>
+
+    <!-- Pantalla de entrada -->
+    <section id="pantalla-entrada" class="capa">
+      <form id="form-entrada" class="tapa" autocomplete="off">
+        <h1 class="titulo"><span>Rat</span><span>Chat</span></h1>
+        <p class="lema">Una alcantarilla donde todas las ratas platican. Aquí no se permiten groserías, insultos ni odio.</p>
+        <label for="campo-nombre">¿Cómo te llamas?</label>
+        <input id="campo-nombre" name="nombre" maxlength="15" minlength="2" required
+               placeholder="Tu nombre de rata" enterkeyhint="go" autocapitalize="words">
+        <p id="error-entrada" class="error" role="alert" hidden></p>
+        <button id="boton-entrar" class="boton boton-principal" type="submit">Entrar a la sala</button>
+        <p id="estado-conexion" class="estado" aria-live="polite"></p>
+      </form>
+    </section>
+
+    <!-- Interfaz dentro del juego -->
+    <section id="hud" hidden>
+      <div class="hud-arriba">
+        <div class="placa">
+          <strong>La Alcantarilla</strong>
+          <span id="conectados">1 en la sala</span>
+        </div>
+        <div class="placa advertencias" title="Advertencias: a la tercera te banean">
+          <span class="etiqueta-adv">Advertencias</span>
+          <span class="cristales" id="cristales" aria-label="0 de 3 advertencias">
+            <i></i><i></i><i></i>
+          </span>
+        </div>
+      </div>
+
+      <aside id="panel-chat" class="placa">
+        <button id="boton-historial" class="cabecera-chat" type="button" aria-expanded="false" aria-controls="lista-chat">
+          <span>Chat de la sala <small class="nota-chat" id="nota-chat">· se borra a los 5 min</small></span>
+          <span class="flecha" aria-hidden="true"></span>
+        </button>
+        <ol id="lista-chat" aria-live="polite"></ol>
+      </aside>
+
+      <form id="form-chat" class="barra-chat" autocomplete="off">
+        <input id="campo-chat" maxlength="120" placeholder="Escribe algo para todos…" enterkeyhint="send" aria-label="Mensaje">
+        <button class="boton boton-principal" type="submit">Enviar</button>
+      </form>
+      <p id="aviso" class="aviso" role="status" hidden></p>
+    </section>
+
+    <!-- Advertencia -->
+    <div id="modal-advertencia" class="fondo-modal" hidden>
+      <div class="modal" role="alertdialog" aria-modal="true" aria-labelledby="adv-titulo" aria-describedby="adv-texto">
+        <div class="icono-modal grieta" aria-hidden="true"></div>
+        <h2 id="adv-titulo">Ese mensaje no está permitido</h2>
+        <p id="adv-texto">Lo censuramos en el chat de todos.</p>
+        <p class="contador" id="adv-contador"></p>
+        <button id="cerrar-advertencia" class="boton boton-principal" type="button">Entendido</button>
+      </div>
+    </div>
+
+    <!-- Baneo -->
+    <div id="modal-baneo" class="fondo-modal" hidden>
+      <div class="modal modal-baneo" role="alertdialog" aria-modal="true" aria-labelledby="ban-titulo" aria-describedby="ban-texto">
+        <div class="icono-modal roto" aria-hidden="true"></div>
+        <h2 id="ban-titulo">Has sido baneado</h2>
+        <p id="ban-texto"></p>
+        <button id="otro-usuario" class="boton boton-principal" type="button">Entrar con otro usuario</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/escena.js"></script>
+  <script src="js/juego.js"></script>
+</body>
+</html>

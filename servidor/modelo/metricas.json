@@ -1,0 +1,472 @@
+{
+  "dataset": {
+    "frases": 10400,
+    "caracteres": 375663,
+    "plantillas": 590,
+    "frases_externas": 0,
+    "por_tipo": {
+      "limpio": 3600,
+      "insulto": 3000,
+      "groseria": 2300,
+      "amenaza": 800,
+      "odio": 700
+    },
+    "plantillas_por_tipo": {
+      "amenaza": 37,
+      "groseria": 93,
+      "insulto": 99,
+      "limpio": 315,
+      "odio": 46
+    }
+  },
+  "configuracion": {
+    "modelo": "TfidfVectorizer (palabras 1-2) + TfidfVectorizer (letras 2-5, char_wb) + LogisticRegression",
+    "logistic_regression": {
+      "C": 4.0,
+      "class_weight": "balanced",
+      "max_iter": 3000
+    },
+    "validacion": {
+      "tipo": "GroupShuffleSplit por plantilla",
+      "divisiones": 5,
+      "tam_prueba": 0.25,
+      "semilla": 7
+    },
+    "umbrales_detector": {
+      "contexto": 0.5,
+      "modelo_sin_palabra_conocida": 0.85,
+      "nombres": 0.85
+    },
+    "versiones": {
+      "python": "3.13.18",
+      "scikit_learn": "1.9.1",
+      "pandas": "3.0.5"
+    }
+  },
+  "plantillas_no_vistas": {
+    "divisiones": 5,
+    "modelo_ia_solo": {
+      "exactitud": {
+        "promedio": 0.9205,
+        "desviacion": 0.015
+      },
+      "precision": {
+        "promedio": 0.9243,
+        "desviacion": 0.0159
+      },
+      "recall": {
+        "promedio": 0.9559,
+        "desviacion": 0.0164
+      },
+      "f1": {
+        "promedio": 0.9397,
+        "desviacion": 0.0115
+      }
+    },
+    "sistema_completo": {
+      "exactitud": {
+        "promedio": 0.9715,
+        "desviacion": 0.0041
+      },
+      "precision": {
+        "promedio": 0.9737,
+        "desviacion": 0.008
+      },
+      "recall": {
+        "promedio": 0.9827,
+        "desviacion": 0.0044
+      },
+      "f1": {
+        "promedio": 0.9782,
+        "desviacion": 0.0023
+      }
+    },
+    "aciertos_por_tipo": {
+      "modelo_ia_solo": {
+        "amenaza": 0.9773,
+        "groseria": 0.952,
+        "insulto": 0.9601,
+        "limpio": 0.8543,
+        "odio": 0.9394
+      },
+      "sistema_completo": {
+        "amenaza": 0.9907,
+        "groseria": 0.9922,
+        "insulto": 0.988,
+        "limpio": 0.9499,
+        "odio": 0.9239
+      }
+    },
+    "matriz_confusion_modelo_ia_solo": [
+      [
+        3883,
+        658
+      ],
+      [
+        370,
+        8015
+      ]
+    ],
+    "matriz_confusion_sistema_completo": [
+      [
+        4316,
+        225
+      ],
+      [
+        145,
+        8240
+      ]
+    ],
+    "ejemplos_error_modelo_ia_solo": [
+      {
+        "texto": "por ke eres tan ganado? :D",
+        "tipo": "limpio",
+        "esperado": "apropiado",
+        "predijo": "inapropiado"
+      },
+      {
+        "texto": "hey qué asco de jugador, estúpido jajaja",
+        "tipo": "insulto",
+        "esperado": "inapropiado",
+        "predijo": "apropiado"
+      },
+      {
+        "texto": "órale de nada 🔥",
+        "tipo": "limpio",
+        "esperado": "apropiado",
+        "predijo": "inapropiado"
+      },
+      {
+        "texto": "ay te voy a pasar el mapa jajaja",
+        "tipo": "limpio",
+        "esperado": "apropiado",
+        "predijo": "inapropiado"
+      },
+      {
+        "texto": "banda te juro que vi una paloma gigante 😂",
+        "tipo": "limpio",
+        "esperado": "apropiado",
+        "predijo": "inapropiado"
+      },
+      {
+        "texto": "Güey oye marica ven acá?!",
+        "tipo": "odio",
+        "esperado": "inapropiado",
+        "predijo": "apropiado"
+      },
+      {
+        "texto": "banda oye maricón ven acá xd",
+        "tipo": "odio",
+        "esperado": "inapropiado",
+        "predijo": "apropiado"
+      },
+      {
+        "texto": "OIGAN PERDÓN, ME EQUIVOQUÉ 👏",
+        "tipo": "limpio",
+        "esperado": "apropiado",
+        "predijo": "inapropiado"
+      },
+      {
+        "texto": "pues ahorita regreso 😂",
+        "tipo": "limpio",
+        "esperado": "apropiado",
+        "predijo": "inapropiado"
+      },
+      {
+        "texto": "acabo de ver que Cacahuate subió de nivel, felicidades",
+        "tipo": "limpio",
+        "esperado": "apropiado",
+        "predijo": "inapropiado"
+      },
+      {
+        "texto": "carnal te voy a pasar l mapa...",
+        "tipo": "limpio",
+        "esperado": "apropiado",
+        "predijo": "inapropiado"
+      },
+      {
+        "texto": "ay a huevo encontré el queso xd",
+        "tipo": "groseria",
+        "esperado": "inapropiado",
+        "predijo": "apropiado"
+      },
+      {
+        "texto": "la neta Rodrigo es el más nacooooo del equipo",
+        "tipo": "insulto",
+        "esperado": "inapropiado",
+        "predijo": "apropiado"
+      },
+      {
+        "texto": "me da vergüenza hablar",
+        "tipo": "limpio",
+        "esperado": "apropiado",
+        "predijo": "inapropiado"
+      },
+      {
+        "texto": "Güey ¿por qué eres tan máquina? jajaja",
+        "tipo": "limpio",
+        "esperado": "apropiado",
+        "predijo": "inapropiado"
+      },
+      {
+        "texto": "ya puede ser 👏",
+        "tipo": "limpio",
+        "esperado": "apropiado",
+        "predijo": "inapropiado"
+      },
+      {
+        "texto": "banda ¿por qué eres tan loquillo?!",
+        "tipo": "limpio",
+        "esperado": "apropiado",
+        "predijo": "inapropiado"
+      },
+      {
+        "texto": "Puede ser!",
+        "tipo": "limpio",
+        "esperado": "apropiado",
+        "predijo": "inapropiado"
+      },
+      {
+        "texto": "no encuentro la salida!",
+        "tipo": "limpio",
+        "esperado": "apropiado",
+        "predijo": "inapropiado"
+      },
+      {
+        "texto": "banda no encuentro la salida...",
+        "tipo": "limpio",
+        "esperado": "apropiado",
+        "predijo": "inapropiado"
+      },
+      {
+        "texto": "Banda puede ser 👏",
+        "tipo": "limpio",
+        "esperado": "apropiado",
+        "predijo": "inapropiado"
+      },
+      {
+        "texto": "Ya te voy a pasar el mapa",
+        "tipo": "limpio",
+        "esperado": "apropiado",
+        "predijo": "inapropiado"
+      },
+      {
+        "texto": "Banda perdón, me equivoqué!!!",
+        "tipo": "limpio",
+        "esperado": "apropiado",
+        "predijo": "inapropiado"
+      },
+      {
+        "texto": "güey de nada...",
+        "tipo": "limpio",
+        "esperado": "apropiado",
+        "predijo": "inapropiado"
+      },
+      {
+        "texto": "Mira te juro que vi una paloma gigante 🔥",
+        "tipo": "limpio",
+        "esperado": "apropiado",
+        "predijo": "inapropiado"
+      }
+    ],
+    "ejemplos_error_sistema_completo": [
+      {
+        "texto": "banda hay que tirar la basura",
+        "tipo": "limpio",
+        "esperado": "apropiado",
+        "predijo": "inapropiado"
+      },
+      {
+        "texto": "banda te juro que vi una paloma gigante 😂",
+        "tipo": "limpio",
+        "esperado": "apropiado",
+        "predijo": "inapropiado"
+      },
+      {
+        "texto": "jajaja bola de lerdos",
+        "tipo": "insulto",
+        "esperado": "inapropiado",
+        "predijo": "apropiado"
+      },
+      {
+        "texto": "pues ahorita regreso 😂",
+        "tipo": "limpio",
+        "esperado": "apropiado",
+        "predijo": "inapropiado"
+      },
+      {
+        "texto": "la neta este chat es para gente normal, no para los judíos jaja",
+        "tipo": "odio",
+        "esperado": "inapropiado",
+        "predijo": "apropiado"
+      },
+      {
+        "texto": "mira hay que tirar la basura xd",
+        "tipo": "limpio",
+        "esperado": "apropiado",
+        "predijo": "inapropiado"
+      },
+      {
+        "texto": "órale ya me tienes harto, ojalá te mates...",
+        "tipo": "amenaza",
+        "esperado": "inapropiado",
+        "predijo": "apropiado"
+      },
+      {
+        "texto": "mano hay que tirar la basura 👏",
+        "tipo": "limpio",
+        "esperado": "apropiado",
+        "predijo": "inapropiado"
+      },
+      {
+        "texto": "no me caen bien los indios jaja",
+        "tipo": "odio",
+        "esperado": "inapropiado",
+        "predijo": "apropiado"
+      },
+      {
+        "texto": "Mira te juro que vi una paloma gigante 🔥",
+        "tipo": "limpio",
+        "esperado": "apropiado",
+        "predijo": "inapropiado"
+      },
+      {
+        "texto": "Mi rey no me caen bien los inmigrantes 🤡",
+        "tipo": "odio",
+        "esperado": "inapropiado",
+        "predijo": "apropiado"
+      },
+      {
+        "texto": "ya me da vergüenza hablar!",
+        "tipo": "limpio",
+        "esperado": "apropiado",
+        "predijo": "inapropiado"
+      },
+      {
+        "texto": "banda Vale eres una ñoña",
+        "tipo": "limpio",
+        "esperado": "apropiado",
+        "predijo": "inapropiado"
+      },
+      {
+        "texto": "hey no me caen bien los indios pues",
+        "tipo": "odio",
+        "esperado": "inapropiado",
+        "predijo": "apropiado"
+      },
+      {
+        "texto": "güey no me caen bien los extranjeros...",
+        "tipo": "odio",
+        "esperado": "inapropiado",
+        "predijo": "apropiado"
+      },
+      {
+        "texto": "la neta te juro que vi una paloma gigante",
+        "tipo": "limpio",
+        "esperado": "apropiado",
+        "predijo": "inapropiado"
+      },
+      {
+        "texto": "OIGAN NO ME CAEN BIEN LOS GITANOS",
+        "tipo": "odio",
+        "esperado": "inapropiado",
+        "predijo": "apropiado"
+      },
+      {
+        "texto": "güey qué asco los gitanos 😤",
+        "tipo": "odio",
+        "esperado": "inapropiado",
+        "predijo": "apropiado"
+      },
+      {
+        "texto": "neta ahorita regreso!",
+        "tipo": "limpio",
+        "esperado": "apropiado",
+        "predijo": "inapropiado"
+      },
+      {
+        "texto": "te juro que vi una paloma gigante 😎",
+        "tipo": "limpio",
+        "esperado": "apropiado",
+        "predijo": "inapropiado"
+      },
+      {
+        "texto": "oigan no me caen bien las lesbianas 😂",
+        "tipo": "odio",
+        "esperado": "inapropiado",
+        "predijo": "apropiado"
+      },
+      {
+        "texto": "órale mueran los gitanos 😂",
+        "tipo": "odio",
+        "esperado": "inapropiado",
+        "predijo": "apropiado"
+      },
+      {
+        "texto": "oigan aquí no queremos machora",
+        "tipo": "odio",
+        "esperado": "inapropiado",
+        "predijo": "apropiado"
+      },
+      {
+        "texto": "Mi rey no me caen bien los extranjeros 😂",
+        "tipo": "odio",
+        "esperado": "inapropiado",
+        "predijo": "apropiado"
+      },
+      {
+        "texto": "Banda qué asco de jugador, p4ya50 xd",
+        "tipo": "insulto",
+        "esperado": "inapropiado",
+        "predijo": "apropiado"
+      }
+    ],
+    "nota": "Matrices sumadas de las 5 divisiones: filas = real (apropiado, inapropiado), columnas = predicho."
+  },
+  "prueba_dificil": {
+    "frases": 136,
+    "advertencia": "Escrita a mano y usada mientras se ajustaba el léxico: resultado optimista.",
+    "exactitud": 0.9853,
+    "precision": 0.9798,
+    "recall": 1.0,
+    "f1_inapropiado": 0.9898,
+    "frases_por_tipo": {
+      "insulto": 46,
+      "limpio": 39,
+      "groseria": 25,
+      "amenaza": 14,
+      "odio": 12
+    },
+    "aciertos_por_tipo": {
+      "amenaza": 1.0,
+      "groseria": 1.0,
+      "insulto": 1.0,
+      "limpio": 0.9487,
+      "odio": 1.0
+    },
+    "matriz_confusion": [
+      [
+        37,
+        2
+      ],
+      [
+        0,
+        97
+      ]
+    ],
+    "errores": [
+      {
+        "texto": "me gustan los zorros y los perros",
+        "tipo": "limpio",
+        "esperado": "apropiado",
+        "predijo": "inapropiado"
+      },
+      {
+        "texto": "los verdes me gustan",
+        "tipo": "limpio",
+        "esperado": "apropiado",
+        "predijo": "inapropiado"
+      }
+    ]
+  }
+}

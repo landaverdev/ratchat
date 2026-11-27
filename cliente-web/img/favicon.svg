@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="RatChat">
+  <rect width="64" height="64" rx="14" fill="#1c2422"/>
+  <g transform="translate(25 38) scale(1.0)" stroke="#1c2422" stroke-linejoin="round" stroke-linecap="round">
+    <!-- orejas -->
+    <circle cx="-14" cy="-12" r="10" fill="#5fa8e8" stroke-width="3"/>
+    <circle cx="-14" cy="-12" r="5.5" fill="#f4a6bd" stroke="none"/>
+    <circle cx="8" cy="-12" r="10" fill="#5fa8e8" stroke-width="3"/>
+    <circle cx="8" cy="-12" r="5.5" fill="#f4a6bd" stroke="none"/>
+    <!-- cara -->
+    <path d="M-15 -6 Q-14 -17 0 -16 Q12 -15 24 2 Q12 12 -2 11 Q-16 8 -15 -6 Z" fill="#5fa8e8" stroke-width="3"/>
+    <!-- dientes -->
+    <rect x="10" y="7" width="6" height="5" fill="#fff" stroke-width="1.5"/>
+    <!-- bigotes -->
+    <path d="M20 3 L31 -1 M20 5 L31 10" fill="none" stroke="#e9f1ee" stroke-width="1.6"/>
+    <!-- nariz -->
+    <circle cx="24" cy="1" r="4" fill="#f06d8b" stroke-width="2"/>
+    <!-- ojo -->
+    <circle cx="6" cy="-5" r="4" fill="#1c2422" stroke="none"/>
+    <circle cx="7.3" cy="-6.4" r="1.5" fill="#fff" stroke="none"/>
+    <!-- cachete -->
+    <ellipse cx="4" cy="4" rx="4" ry="2.6" fill="#ff7896" fill-opacity=".5" stroke="none"/>
+  </g>
+</svg>

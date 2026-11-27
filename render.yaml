@@ -1,0 +1,13 @@
+# Despliegue en Render (https://render.com): New > Blueprint > elige este repositorio.
+# El modelo se entrena durante el build (tarda unos segundos).
+services:
+  - type: web
+    name: ratchat
+    runtime: python
+    plan: free
+    buildCommand: pip install -r servidor/requirements.txt && cd servidor && python entrenar.py
+    startCommand: cd servidor && uvicorn app:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /salud
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.8
